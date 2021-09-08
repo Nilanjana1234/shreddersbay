@@ -7,6 +7,7 @@ var User = function(user) {
   this.mobile = user.mobile;
   this.email = user.email;
   this.password = user.password;
+  this.userRole = user.userRole;
 };
 
 User.create = (newUser, result) => {
@@ -19,6 +20,19 @@ User.create = (newUser, result) => {
 
     console.log("created user: ", { id: res.insertId, ...newUser });
     result(null, { id: res.insertId, ...newUser });
+  });
+};
+
+User.getAll = (result) => {
+  sql.query("SELECT * FROM users", (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("users: ", res);
+    result(null, res);
   });
 };
 
@@ -41,18 +55,51 @@ User.findById = (userId, result) => {
   });
 };
 
-User.getAll = result => {
-  sql.query("SELECT * FROM users", (err, res) => {
+User.findByEmail = (userEmail, result) => {
+  sql.query(`SELECT * FROM users WHERE email = '${userEmail}'`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(null, err);
+      result(err, null);
       return;
     }
 
-    console.log("users: ", res);
-    result(null, res);
+    if (res.length) {
+      console.log("found user: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found User with the id
+    result({ kind: "not_found" }, null);
   });
 };
+
+User.findCustomer = result => {
+    sql.query(`SELECT * FROM users WHERE userRole = 0`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      console.log("Customers: ", res);
+      result(null, res);
+    });
+  };
+
+  User.findDealer = result => {
+    sql.query(`SELECT * FROM users WHERE userRole = 1`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      console.log("Dealers: ", res);
+      result(null, res);
+    });
+  };
+
 
 User.updateById = (id, user, result) => {
   sql.query(
@@ -76,6 +123,51 @@ User.updateById = (id, user, result) => {
     }
   );
 };
+
+User.activeUser = (id, result) => {
+  sql.query(
+    `UPDATE users SET status = 1 WHERE id = ${id}`,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found User with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated user: ", { id: id, ...user });
+      result(null, { id: id, ...user });
+    }
+  );
+};
+
+User.inActiveUser = (id, result) => {
+  sql.query(
+    `UPDATE users SET status = 0 WHERE id = ${id}`,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found User with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated user: ", { id: id, ...user });
+      result(null, { id: id, ...user });
+    }
+  );
+};
+
 
 User.remove = (id, result) => {
   sql.query("DELETE FROM users WHERE id = ?", id, (err, res) => {
