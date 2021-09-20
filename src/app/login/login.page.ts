@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { APIService } from '../services/api.service';
-
+import * as bcrypt from 'bcryptjs';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +12,7 @@ import { APIService } from '../services/api.service';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
   data: any;
+  role: any;
 
 
   constructor(
@@ -21,6 +22,7 @@ export class LoginPage implements OnInit {
     private activateRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    this.role = this.activateRoute.snapshot.params.role;
     this.loginForm = this.fb.group({
       email: [''],
       password: [''],
@@ -34,13 +36,19 @@ export class LoginPage implements OnInit {
       this.apiService.getbyEmail(this.loginForm.value.email).toPromise().then((res) => {
           console.log(this.loginForm.value);
           this.data=res;
+        alert(res);
           console.log(this.data.password);
-            if(this.data.password === this.loginForm.value.password )
+            if(this.data.password===this.loginForm.value.password)
             {
               alert('Login Successfully');
               this.loginForm.reset();
               sessionStorage.setItem('userDetails', JSON.stringify(this.data));
-              this.router.navigate(['dashboard']);
+              if(this.data.userRole === this.role){
+                this.router.navigate(['customer']);
+              }
+              else if(this.data.userRole === this.role){
+                this.router.navigate(['dealer']);
+              }
             }
             else{
               alert('Invalid Id Or Password');
