@@ -124,9 +124,9 @@ User.updateById = (id, user, result) => {
   );
 };
 
-User.activeUser = (id, result) => {
+User.status = (id, status, result) => {
   sql.query(
-    `UPDATE users SET status = 1 WHERE id = ${id}`,
+    `UPDATE users SET status = ${status} WHERE id = ${id}`,
     (err, res) => {
       if (err) {
         console.log("error: ", err);

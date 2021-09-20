@@ -3,9 +3,9 @@ var config = require("../config/auth.config");
 var db = require("../models/users.model");
 var User = db.user;
 
+
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
-
   if (!token) {
     return res.status(403).send({
       message: "No token provided!"
@@ -23,67 +23,38 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = (req, res, next) => {
-  User.findById(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require Admin Role!"
-      });
-      return;
-    });
-  });
-};
-
 isDealer = (req, res, next) => {
   User.findById(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "dealer") {
+        if (user.userRole === "1") {
           next();
           return;
         }
-      }
-
-      res.status(403).send({
-        message: "Require Dealer Role!"
+        else{
+          res.status(403).send({
+            message: "Require Dealer Role!"
+          });
+        }
       });
-    });
-  });
-};
+    }
 
 isCustomer = (req, res, next) => {
   User.findById(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
+        if (user.userRole === "0") {
           next();
           return;
         }
-
-        if (roles[i].name === "admin") {
-          next();
-          return;
+        else{
+          res.status(403).send({
+            message: "Require Customer Role!"
+          });
         }
-      }
-
-      res.status(403).send({
-        message: "Require Moderator or Admin Role!"
-      });
-    });
   });
 };
 
-const authJwt = {
+var authJwt = {
   verifyToken: verifyToken,
-  isAdmin: isAdmin,
   isDealer: isDealer,
   isCustomer: isCustomer
 };
+
 module.exports = authJwt;
