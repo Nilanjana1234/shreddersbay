@@ -1,5 +1,6 @@
 var User = require("../../../models/users.model");
-var auth=require("../controllers/auth.controller")
+var auth=require("../controllers/auth.controller");
+var bcrypt = require("bcryptjs");
 exports.create = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -13,7 +14,7 @@ exports.create = (req, res) => {
     name: req.body.name,
     mobile: req.body.mobile,
     email: req.body.email,
-    password: req.body.password,
+    password: bcrypt.hashSync(req.body.password, 8),
     userRole: req.body.userRole,
   });
   // Save User in the database
@@ -125,16 +126,16 @@ exports.update = (req, res) => {
   );
 };
 
-// Activate a User identified by the userId in the request
-exports.activeUser = (req, res) => {
+// activate a User identified by the userId in the request
+exports.status = (req, res) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
   }
-  User.activeUser(
-    req.params.userId,
+  User.status(
+    req.params.userId,req.params.status,
     new User(req.body),
     (err, data) => {
       if (err) {
@@ -151,34 +152,6 @@ exports.activeUser = (req, res) => {
     }
   );
 };
-
-// InActivate a User identified by the userId in the request
-exports.inActiveUser = (req, res) => {
-  // Validate Request
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-  }
-  User.inActiveUser(
-    req.params.userId,
-    new User(req.body),
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message: `Not found User with id ${req.params.userId}.`
-          });
-        } else {
-          res.status(500).send({
-            message: "Error updating User with id " + req.params.userId
-          });
-        }
-      } else res.send(data);
-    }
-  );
-};
-
 
 // Delete a User with the specified userId in the request
 exports.delete = (req, res) => {
@@ -209,9 +182,6 @@ exports.deleteAll = (req, res) => {
   });
 };
 
-exports.adminBoard = (req, res) => {
-  res.status(200).send("Admin Content.");
-};
 
 exports.dealerBoard = (req, res) => {
   res.status(200).send("Dealer Content.");
