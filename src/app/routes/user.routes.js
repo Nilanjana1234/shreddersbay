@@ -1,6 +1,6 @@
 module.exports = app => {
   const users = require("../controllers/user.controller");
-  const { authJwt } = require("../../../models");
+  const  authJwt  = require("../../../models");
 
   // Create a new Customer
   app.post("/users", users.create);
@@ -23,20 +23,18 @@ module.exports = app => {
   // Update a Customer with customerId
   app.put("/users/:userId", users.update);
 
+    // Update a Customer with customerId
+    app.put("/users/status/:userId", users.status);
+
+
   // Delete a User with customerId
   app.delete("/users/:userId", users.delete);
 
   // Delete all Users
   app.delete("/users", users.deleteAll);
 
-  app.get("/users/admin", [authJwt.verifyToken, authJwt.isAdmin], users.adminBoard);
 
-  app.get("/users/dealer", [authJwt.verifyToken], authJwt.isDealer, users.dealerBoard);
+  app.get("/users/dealer", [authJwt.verifyToken, authJwt.isDealer], users.dealerBoard);
 
   app.get("/users/customer", [authJwt.verifyToken, authJwt.isCustomer], users.customerBoard);
-
-  app.put("/users/activate/:userId", users.activeUser);
-
-  app.put("/users/inactivate/:userId", users.inActiveUser);
-
 };
