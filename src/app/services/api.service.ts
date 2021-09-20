@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 const baseUrl = 'http://localhost:3000/users';
-const customerUrl = 'http://localhost:3000/customers';
+const customerURL = 'http://localhost:3000/customers';
+const dealerURL = 'http://localhost:3000/dealers';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,32 +12,40 @@ export class APIService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<any> {
+  getAll(){
     return this.http.get(baseUrl);
   }
 
-  getbyId(id: any): Observable<any> {
+  getbyId(id: any){
     return this.http.get(`${baseUrl}/${id}`);
   }
 
-  getbyEmail(email: any): Observable<any> {
+  getbyEmail(email: any){
     return this.http.get(`${baseUrl}/email/${email}`);
   }
-  create(data: any): Observable<any> {
+
+  getCustomers(){
+    return this.http.get(`${customerURL}`);
+  }
+
+  getDealers(){
+    return this.http.get(`${dealerURL}`);
+  }
+
+  create(data: any){
     return this.http.post(baseUrl, data);
   }
 
-  update(id: any, data: any): Observable<any> {
+  update(id: any, data: any){
     return this.http.patch(`${baseUrl}/${id}`, data);
   }
 
-  delete(id: any): Observable<any> {
+  status(id: any, status: any){
+    return this.http.patch(`${baseUrl}/status/${id}`, status);
+  }
+
+  delete(id: any){
     return this.http.delete(`${baseUrl}/${id}`);
   }
-  getCustomers(): Observable<any> {
-    return this.http.get(`${customerUrl}`);
-  }
-  // inActivateUser(id): Observable<any> {
-  //   return this.http.get(`${baseUrl}/inactivate/${id}`);
-  // }
+
 }
