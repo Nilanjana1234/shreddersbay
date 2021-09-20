@@ -43,10 +43,10 @@ export class LoginPage implements OnInit {
               alert('Login Successfully');
               this.loginForm.reset();
               sessionStorage.setItem('userDetails', JSON.stringify(this.data));
-              if(this.data.userRole === this.role){
+              if(this.data.userRole === 0 && this.role === 0){
                 this.router.navigate(['customer']);
               }
-              else if(this.data.userRole === this.role){
+              else if(this.data.userRole === 1 && this.role === 1){
                 this.router.navigate(['dealer']);
               }
             }
