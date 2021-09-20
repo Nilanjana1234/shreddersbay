@@ -2,36 +2,14 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'frontend', pathMatch: 'full' },
   {
-    path: 'passwordreset',
-    loadChildren: './passwordreset/passwordreset.module#PasswordresetPageModule'
-  },
-  { path: 'cart', loadChildren: './cart/cart.module#CartPageModule' },
-  {
-    path: 'productdetail/:pid',
-    loadChildren: './productdetail/productdetail.module#ProductdetailPageModule'
+    path: '',
+    redirectTo: 'frontend',
+    pathMatch: 'full'
   },
   {
-    path: 'productlist',
-    loadChildren: './productlist/productlist.module#ProductlistPageModule'
-  },
-  {
-    path: 'Checkout',
-    loadChildren: './checkout/checkout.module#CheckoutPageModule'
-  },
-  {
-    path: 'applypromo',
-    loadChildren: './applypromo/applypromo.module#ApplypromoPageModule'
-  },
-  { path: 'orders', loadChildren: './orders/orders.module#OrdersPageModule' },
-  {
-    path: 'orderinfo',
-    loadChildren: './orderinfo/orderinfo.module#OrderinfoPageModule'
-  },
-  {
-    path: 'frontend',
-    loadChildren: () => import('./frontend/frontend.module').then( m => m.FrontendPageModule)
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
     path: 'signup',
@@ -42,13 +20,13 @@ const routes: Routes = [
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-  }
-
-
-
-
+    path: 'frontend',
+    loadChildren: () => import('./frontend/frontend.module').then( m => m.FrontendPageModule)
+  },
+  {
+    path: 'dealer',
+    loadChildren: () => import('./dealer/dealer.module').then( m => m.DealerPageModule)
+  },
 ];
 
 @NgModule({
@@ -58,4 +36,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-
